@@ -2,16 +2,16 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
-DROP SCHEMA IF EXISTS `mydb` ;
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
-USE `mydb` ;
+DROP SCHEMA IF EXISTS `flux` ;
+CREATE SCHEMA IF NOT EXISTS `flux` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
+USE `flux` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`User`
+-- Table `flux`.`User`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`User` ;
+DROP TABLE IF EXISTS `flux`.`User` ;
 
-CREATE  TABLE IF NOT EXISTS `mydb`.`User` (
+CREATE  TABLE IF NOT EXISTS `flux`.`User` (
   `idUser` BIGINT NOT NULL AUTO_INCREMENT ,
   `login` VARCHAR(45) NOT NULL ,
   `password` VARCHAR(45) NOT NULL ,
@@ -21,36 +21,36 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`User` (
   PRIMARY KEY (`idUser`) )
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `idUser_UNIQUE` ON `mydb`.`User` (`idUser` ASC) ;
+CREATE UNIQUE INDEX `idUser_UNIQUE` ON `flux`.`User` (`idUser` ASC) ;
 
-CREATE UNIQUE INDEX `login_UNIQUE` ON `mydb`.`User` (`login` ASC) ;
+CREATE UNIQUE INDEX `login_UNIQUE` ON `flux`.`User` (`login` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Currency`
+-- Table `flux`.`Currency`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Currency` ;
+DROP TABLE IF EXISTS `flux`.`Currency` ;
 
-CREATE  TABLE IF NOT EXISTS `mydb`.`Currency` (
+CREATE  TABLE IF NOT EXISTS `flux`.`Currency` (
   `idCurrency` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NOT NULL ,
   `fullName` VARCHAR(45) NOT NULL DEFAULT '\"\"' ,
   PRIMARY KEY (`idCurrency`) )
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `idCurrency_UNIQUE` ON `mydb`.`Currency` (`idCurrency` ASC) ;
+CREATE UNIQUE INDEX `idCurrency_UNIQUE` ON `flux`.`Currency` (`idCurrency` ASC) ;
 
-CREATE UNIQUE INDEX `name_UNIQUE` ON `mydb`.`Currency` (`name` ASC) ;
+CREATE UNIQUE INDEX `name_UNIQUE` ON `flux`.`Currency` (`name` ASC) ;
 
-CREATE UNIQUE INDEX `fullName_UNIQUE` ON `mydb`.`Currency` (`fullName` ASC) ;
+CREATE UNIQUE INDEX `fullName_UNIQUE` ON `flux`.`Currency` (`fullName` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Account`
+-- Table `flux`.`Account`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Account` ;
+DROP TABLE IF EXISTS `flux`.`Account` ;
 
-CREATE  TABLE IF NOT EXISTS `mydb`.`Account` (
+CREATE  TABLE IF NOT EXISTS `flux`.`Account` (
   `idAccount` BIGINT NOT NULL AUTO_INCREMENT ,
   `idBank` BIGINT NOT NULL ,
   `idUser` BIGINT NOT NULL ,
@@ -58,39 +58,39 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`Account` (
   PRIMARY KEY (`idAccount`, `idCurrency`) ,
   CONSTRAINT `fk_Account_User`
     FOREIGN KEY (`idUser` )
-    REFERENCES `mydb`.`User` (`idUser` )
+    REFERENCES `flux`.`User` (`idUser` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Account_Currency`
     FOREIGN KEY (`idCurrency` )
-    REFERENCES `mydb`.`Currency` (`idCurrency` )
+    REFERENCES `flux`.`Currency` (`idCurrency` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `idAccount_UNIQUE` ON `mydb`.`Account` (`idAccount` ASC) ;
+CREATE UNIQUE INDEX `idAccount_UNIQUE` ON `flux`.`Account` (`idAccount` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Status`
+-- Table `flux`.`Status`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Status` ;
+DROP TABLE IF EXISTS `flux`.`Status` ;
 
-CREATE  TABLE IF NOT EXISTS `mydb`.`Status` (
+CREATE  TABLE IF NOT EXISTS `flux`.`Status` (
   `idStatus` INT NOT NULL AUTO_INCREMENT ,
   `message` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`idStatus`) )
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `idStatus_UNIQUE` ON `mydb`.`Status` (`idStatus` ASC) ;
+CREATE UNIQUE INDEX `idStatus_UNIQUE` ON `flux`.`Status` (`idStatus` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Transaction`
+-- Table `flux`.`Transaction`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Transaction` ;
+DROP TABLE IF EXISTS `flux`.`Transaction` ;
 
-CREATE  TABLE IF NOT EXISTS `mydb`.`Transaction` (
+CREATE  TABLE IF NOT EXISTS `flux`.`Transaction` (
   `idTransaction` BIGINT NOT NULL AUTO_INCREMENT ,
   `idAccountFrom` BIGINT NOT NULL ,
   `idAccountTo` BIGINT NOT NULL ,
@@ -103,17 +103,17 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`Transaction` (
   PRIMARY KEY (`idTransaction`) ,
   CONSTRAINT `fk_Transaction_Account1`
     FOREIGN KEY (`idAccount` , `idCurrency` )
-    REFERENCES `mydb`.`Account` (`idAccount` , `idCurrency` )
+    REFERENCES `flux`.`Account` (`idAccount` , `idCurrency` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Transaction_Status1`
     FOREIGN KEY (`Status_idStatus` )
-    REFERENCES `mydb`.`Status` (`idStatus` )
+    REFERENCES `flux`.`Status` (`idStatus` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `idTransaction_UNIQUE` ON `mydb`.`Transaction` (`idTransaction` ASC) ;
+CREATE UNIQUE INDEX `idTransaction_UNIQUE` ON `flux`.`Transaction` (`idTransaction` ASC) ;
 
 
 
