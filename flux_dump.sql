@@ -1,122 +1,116 @@
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
+/*
+Navicat MySQL Data Transfer
 
-DROP SCHEMA IF EXISTS `flux` ;
-CREATE SCHEMA IF NOT EXISTS `flux` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
-USE `flux` ;
+Source Server         : Flux local
+Source Server Version : 50520
+Source Host           : localhost:3306
+Source Database       : flux
 
--- -----------------------------------------------------
--- Table `flux`.`User`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `flux`.`User` ;
+Target Server Type    : MYSQL
+Target Server Version : 50520
+File Encoding         : 65001
 
-CREATE  TABLE IF NOT EXISTS `flux`.`User` (
-  `idUser` BIGINT NOT NULL AUTO_INCREMENT ,
-  `login` VARCHAR(45) NOT NULL ,
-  `password` VARCHAR(45) NOT NULL ,
-  `name` VARCHAR(45) NOT NULL ,
-  `surname` VARCHAR(45) NOT NULL ,
-  `keyBank` BIGINT NOT NULL ,
-  PRIMARY KEY (`idUser`) )
-ENGINE = InnoDB;
+Date: 2012-01-30 02:51:41
+*/
 
-CREATE UNIQUE INDEX `idUser_UNIQUE` ON `flux`.`User` (`idUser` ASC) ;
+SET FOREIGN_KEY_CHECKS=0;
+-- ----------------------------
+-- Table structure for `account`
+-- ----------------------------
+DROP TABLE IF EXISTS `account`;
+CREATE TABLE `account` (
+  `account_id` bigint(20) NOT NULL DEFAULT '0',
+  `user_id` int(11) DEFAULT NULL,
+  `bank_id` int(11) DEFAULT NULL,
+  `currency_id` int(11) DEFAULT NULL,
+  `amount` double(20,0) DEFAULT NULL,
+  `security_key` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`account_id`),
+  KEY `account_ibfk_1` (`user_id`),
+  KEY `currency_id` (`currency_id`),
+  CONSTRAINT `account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `account_ibfk_2` FOREIGN KEY (`currency_id`) REFERENCES `currency` (`currency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE UNIQUE INDEX `login_UNIQUE` ON `flux`.`User` (`login` ASC) ;
+-- ----------------------------
+-- Records of account
+-- ----------------------------
+INSERT INTO `account` VALUES ('0', null, null, null, null, null);
+INSERT INTO `account` VALUES ('1', '1', '1', '1', '123', '12133');
 
+-- ----------------------------
+-- Table structure for `currency`
+-- ----------------------------
+DROP TABLE IF EXISTS `currency`;
+CREATE TABLE `currency` (
+  `currency_id` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(3) CHARACTER SET utf8 DEFAULT NULL,
+  `long_name` varchar(30) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`currency_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- -----------------------------------------------------
--- Table `flux`.`Currency`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `flux`.`Currency` ;
+-- ----------------------------
+-- Records of currency
+-- ----------------------------
+INSERT INTO `currency` VALUES ('1', 'UAH', 'Ukrainian hryvnia');
 
-CREATE  TABLE IF NOT EXISTS `flux`.`Currency` (
-  `idCurrency` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NOT NULL ,
-  `fullName` VARCHAR(45) NOT NULL DEFAULT '\"\"' ,
-  PRIMARY KEY (`idCurrency`) )
-ENGINE = InnoDB;
+-- ----------------------------
+-- Table structure for `status`
+-- ----------------------------
+DROP TABLE IF EXISTS `status`;
+CREATE TABLE `status` (
+  `status_id` int(11) NOT NULL DEFAULT '0',
+  `status_message` varchar(30) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`status_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE UNIQUE INDEX `idCurrency_UNIQUE` ON `flux`.`Currency` (`idCurrency` ASC) ;
+-- ----------------------------
+-- Records of status
+-- ----------------------------
 
-CREATE UNIQUE INDEX `name_UNIQUE` ON `flux`.`Currency` (`name` ASC) ;
+-- ----------------------------
+-- Table structure for `transaction`
+-- ----------------------------
+DROP TABLE IF EXISTS `transaction`;
+CREATE TABLE `transaction` (
+  `transaction_id` bigint(20) NOT NULL DEFAULT '0',
+  `account_id_from` bigint(20) DEFAULT NULL,
+  `account_id_to` bigint(20) DEFAULT NULL,
+  `start_date` timestamp NULL DEFAULT NULL,
+  `end_date` timestamp NULL DEFAULT NULL,
+  `amount` double(20,0) DEFAULT NULL,
+  `status_id` int(11) DEFAULT NULL,
+  `currency_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`transaction_id`),
+  KEY `account_id_from` (`account_id_from`),
+  KEY `account_id_to` (`account_id_to`),
+  KEY `status_id` (`status_id`),
+  KEY `currency_id` (`currency_id`),
+  CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`account_id_from`) REFERENCES `account` (`account_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `transaction_ibfk_2` FOREIGN KEY (`account_id_to`) REFERENCES `account` (`account_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `transaction_ibfk_3` FOREIGN KEY (`status_id`) REFERENCES `status` (`status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `transaction_ibfk_4` FOREIGN KEY (`currency_id`) REFERENCES `currency` (`currency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE UNIQUE INDEX `fullName_UNIQUE` ON `flux`.`Currency` (`fullName` ASC) ;
+-- ----------------------------
+-- Records of transaction
+-- ----------------------------
 
+-- ----------------------------
+-- Table structure for `user`
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `login` varchar(30) CHARACTER SET utf8 DEFAULT NULL,
+  `password` varchar(15) CHARACTER SET utf8 DEFAULT NULL,
+  `name` varchar(30) CHARACTER SET utf8 DEFAULT NULL,
+  `surname` varchar(30) CHARACTER SET utf8 DEFAULT NULL,
+  `security_key` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
--- -----------------------------------------------------
--- Table `flux`.`Account`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `flux`.`Account` ;
-
-CREATE  TABLE IF NOT EXISTS `flux`.`Account` (
-  `idAccount` BIGINT NOT NULL AUTO_INCREMENT ,
-  `idBank` BIGINT NOT NULL ,
-  `idUser` BIGINT NOT NULL ,
-  `idCurrency` INT NOT NULL ,
-  PRIMARY KEY (`idAccount`, `idCurrency`) ,
-  CONSTRAINT `fk_Account_User`
-    FOREIGN KEY (`idUser` )
-    REFERENCES `flux`.`User` (`idUser` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Account_Currency`
-    FOREIGN KEY (`idCurrency` )
-    REFERENCES `flux`.`Currency` (`idCurrency` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-CREATE UNIQUE INDEX `idAccount_UNIQUE` ON `flux`.`Account` (`idAccount` ASC) ;
-
-
--- -----------------------------------------------------
--- Table `flux`.`Status`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `flux`.`Status` ;
-
-CREATE  TABLE IF NOT EXISTS `flux`.`Status` (
-  `idStatus` INT NOT NULL AUTO_INCREMENT ,
-  `message` VARCHAR(45) NOT NULL ,
-  PRIMARY KEY (`idStatus`) )
-ENGINE = InnoDB;
-
-CREATE UNIQUE INDEX `idStatus_UNIQUE` ON `flux`.`Status` (`idStatus` ASC) ;
-
-
--- -----------------------------------------------------
--- Table `flux`.`Transaction`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `flux`.`Transaction` ;
-
-CREATE  TABLE IF NOT EXISTS `flux`.`Transaction` (
-  `idTransaction` BIGINT NOT NULL AUTO_INCREMENT ,
-  `idAccountFrom` BIGINT NOT NULL ,
-  `idAccountTo` BIGINT NOT NULL ,
-  `dateStart` DATETIME NOT NULL ,
-  `dateEnd` DATETIME NOT NULL ,
-  `idStatus` INT NOT NULL ,
-  `idAccount` BIGINT NOT NULL ,
-  `idCurrency` INT NOT NULL ,
-  `Status_idStatus` INT NOT NULL ,
-  PRIMARY KEY (`idTransaction`) ,
-  CONSTRAINT `fk_Transaction_Account1`
-    FOREIGN KEY (`idAccount` , `idCurrency` )
-    REFERENCES `flux`.`Account` (`idAccount` , `idCurrency` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Transaction_Status1`
-    FOREIGN KEY (`Status_idStatus` )
-    REFERENCES `flux`.`Status` (`idStatus` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-CREATE UNIQUE INDEX `idTransaction_UNIQUE` ON `flux`.`Transaction` (`idTransaction` ASC) ;
-
-
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES ('1', 'flux@flux.com', 'Flux1', 'Flux', 'Flux', '0');
