@@ -1,17 +1,10 @@
-/*
-Navicat MySQL Data Transfer
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
-Source Server         : Flux local
-Source Server Version : 50520
-Source Host           : localhost:3306
-Source Database       : flux
-
-Target Server Type    : MYSQL
-Target Server Version : 50520
-File Encoding         : 65001
-
-Date: 2012-01-30 02:51:41
-*/
+DROP SCHEMA IF EXISTS `flux` ;
+CREATE SCHEMA IF NOT EXISTS `flux` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
+USE `flux` ;
 
 SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
@@ -35,7 +28,6 @@ CREATE TABLE `account` (
 -- ----------------------------
 -- Records of account
 -- ----------------------------
-INSERT INTO `account` VALUES ('0', null, null, null, null, null);
 INSERT INTO `account` VALUES ('1', '1', '1', '1', '123', '12133');
 
 -- ----------------------------
